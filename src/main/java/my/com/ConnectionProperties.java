@@ -2,37 +2,37 @@ package my.com;
 
 public class ConnectionProperties {
 
-    private String host = null;
-    private String port = null;
-    private String dbName = null;
-    private String userName = null;
-    private String password = null;
+    private final String HOST;
+    private final String PORT;
+    private final String DBNAME;
+    private final String USERNAME;
+    private final String PASSWORD;
 
-    public void setProperties(String host, String port, String dbName, String userName, String password) {
-        this.host = host;
-        this.port = port;
-        this.dbName = dbName;
-        this.userName = userName;
-        this.password = password;
+    public ConnectionProperties(String host, String port, String dbName, String userName, String password) {
+        HOST = host;
+        PORT = port;
+        DBNAME = dbName;
+        USERNAME = userName;
+        PASSWORD = password;
     }
 
-    String getHost() {
-        return host;
+    public String getHost() {
+        return HOST;
     }
 
-    String getPort() {
-        return port;
+    public String getPort() {
+        return PORT;
     }
 
-    String getDBName() {
-        return dbName;
+    public String getDBName() {
+        return DBNAME;
     }
 
-    String getUserName() {
-        return userName;
+    public String getUserName() {
+        return USERNAME;
     }
 
-    String getPassword() {
-        return password;
+    public String getPassword() {
+        return PASSWORD;
     }
 }

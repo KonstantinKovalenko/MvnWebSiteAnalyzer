@@ -1,6 +1,5 @@
 package my.com;
 
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -13,9 +12,9 @@ public class SaveDataInMySQL implements SaveSiteData {
 
     private final String mainPage;
     private static ExceptionHandler exceptionHandler;
-    private ConnectionProperties cProperties;
+    private final ConnectionProperties cProperties;
 
-    SaveDataInMySQL(ConnectionProperties cProperties,String mainPage) {
+    SaveDataInMySQL(ConnectionProperties cProperties, String mainPage) {
         this.mainPage = mainPage;
         createExceptionHandler();
         this.cProperties = cProperties;
@@ -28,15 +27,11 @@ public class SaveDataInMySQL implements SaveSiteData {
 
     @Override
     public void saveData(Site site) {
-        Connection con = null;
-        try {
-            con = openConnection();
+        try (Connection con = openConnection()) {
             addDataToMainTable(con);
             addDataToSecondaryTable(con, site);
         } catch (SQLException e) {
             exceptionHandler.handleException(e);
-        } finally {
-            closeConnection(con);
         }
     }
 
@@ -44,7 +39,7 @@ public class SaveDataInMySQL implements SaveSiteData {
         final String scanDate = buildScanDate();
         final String sSQL = "insert into sites (MainPage,ScanDate) values ('" + mainPage + "'," + Integer.parseInt(scanDate) + ")";
         Statement statement = con.createStatement();
-         statement.execute(sSQL);
+        statement.execute(sSQL);
     }
 
     private String buildScanDate() {
@@ -85,20 +80,5 @@ public class SaveDataInMySQL implements SaveSiteData {
     private Connection openConnection() throws SQLException {
         final String dbURL = "jdbc:mysql://" + cProperties.getHost() + ":" + cProperties.getPort() + "/" + cProperties.getDBName();
         return DriverManager.getConnection(dbURL, cProperties.getUserName(), cProperties.getPassword());
-    }
-
-    private void closeConnection(Connection con) {
-        try {
-            con.close();
-        } catch (SQLException e) {
-            System.err.println("Cannot close connection: " + e.getMessage());
-        }
-    }
-    public static void main (String[] args){
-        WebSiteAnalyzer wa = new WebSiteAnalyzer("http://www.beluys.com/create_site/create_site4.html", "html");
-        wa.scanWebSite();
-        ConnectionProperties cProperties = new ConnectionProperties();
-        cProperties.setProperties("localhost","3306","WebSiteAnalyzerDB","root","gosuprotoss");
-        wa.saveDataToMySQL(cProperties,wa.getSite());
     }
 }
