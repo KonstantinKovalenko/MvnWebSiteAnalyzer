@@ -1,5 +1,6 @@
-package my.com;
+package work.savedata;
 
+import work.db.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -7,6 +8,8 @@ import java.sql.Statement;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import work.analyzer.ExceptionHandler;
+import work.analyzer.WebSiteAnalyzer;
 
 public class SaveDataInMySQL implements SaveSiteData {
 
@@ -14,7 +17,7 @@ public class SaveDataInMySQL implements SaveSiteData {
     private static ExceptionHandler exceptionHandler;
     private final ConnectionProperties cProperties;
 
-    SaveDataInMySQL(ConnectionProperties cProperties, String mainPage) {
+    public SaveDataInMySQL(ConnectionProperties cProperties, String mainPage) {
         this.mainPage = mainPage;
         createExceptionHandler();
         this.cProperties = cProperties;

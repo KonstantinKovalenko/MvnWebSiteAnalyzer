@@ -1,4 +1,4 @@
-package my.com;
+package work.db;
 
 import java.util.*;
 
@@ -6,23 +6,23 @@ public class Site {
 
     private final List<Page> siteDB;
 
-    Site() {
+    public Site() {
         siteDB = new ArrayList();
     }
 
-    void add(Page page) {
+    public void add(Page page) {
         siteDB.add(page);
     }
 
-    void clear() {
+    public void clear() {
         siteDB.clear();
     }
 
-    int size() {
+    public int size() {
         return siteDB.size();
     }
 
-    List getSiteDataBase() {
+    public List getSiteDataBase() {
         return siteDB;
     }
 

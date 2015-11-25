@@ -1,4 +1,4 @@
-package my.com;
+package work.savedata;
 
 public class ConnectionProperties {
 

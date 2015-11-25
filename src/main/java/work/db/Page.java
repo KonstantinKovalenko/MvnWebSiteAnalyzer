@@ -1,4 +1,4 @@
-package my.com;
+package work.db;
 
 import java.util.Objects;
 
@@ -9,32 +9,32 @@ public class Page {
     private final String pageName;
     private String phraseMatch;
 
-    Page(String pageName, int pageSymbolCounter, int pageMatchesCounter) {
+    public Page(String pageName, int pageSymbolCounter, int pageMatchesCounter) {
         this.pageName = pageName;
         this.pageSymbolCounter = pageSymbolCounter;
         this.pageMatchesCounter = pageMatchesCounter;
     }
 
-    Page(String pageName, int pageSymbolCounter, int pageMatchesCounter, String phraseMatch) {
+    public Page(String pageName, int pageSymbolCounter, int pageMatchesCounter, String phraseMatch) {
         this.pageName = pageName;
         this.pageSymbolCounter = pageSymbolCounter;
         this.pageMatchesCounter = pageMatchesCounter;
         this.phraseMatch = phraseMatch;
     }
 
-    int getPageSymbolCounter() {
+    public int getPageSymbolCounter() {
         return pageSymbolCounter;
     }
 
-    int getPageMatchesCounter() {
+    public int getPageMatchesCounter() {
         return pageMatchesCounter;
     }
 
-    String getPageName() {
+    public String getPageName() {
         return pageName;
     }
 
-    String getPhraseMatch() {
+    public String getPhraseMatch() {
         return phraseMatch;
     }
 

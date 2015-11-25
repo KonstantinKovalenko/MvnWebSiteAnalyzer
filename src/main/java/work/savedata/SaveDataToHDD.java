@@ -1,6 +1,11 @@
-package my.com;
+package work.savedata;
 
+import work.savedata.SaveSiteData;
+import work.db.Page;
+import work.db.Site;
 import java.io.*;
+import work.analyzer.ExceptionHandler;
+import work.analyzer.WebSiteAnalyzer;
 
 public class SaveDataToHDD implements SaveSiteData {
 
@@ -9,7 +14,7 @@ public class SaveDataToHDD implements SaveSiteData {
     private final String HTTPS = "https://";
     private static ExceptionHandler exceptionHandler;
 
-    SaveDataToHDD(String path) {
+    public SaveDataToHDD(String path) {
         this.path = path;
         createExceptionHandler();
     }

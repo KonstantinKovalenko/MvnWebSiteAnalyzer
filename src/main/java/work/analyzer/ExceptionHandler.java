@@ -1,4 +1,4 @@
-package my.com;
+package work.analyzer;
 
 import java.util.*;
 
@@ -6,18 +6,18 @@ public class ExceptionHandler {
 
     static ArrayList<Exception> errorLog = new ArrayList();
 
-    void checkObjectForNullLink(Object o) {
+    public void checkObjectForNullLink(Object o) {
         if (o == null) {
             throw new NullPointerException();
         }
     }
 
-    void handleException(Exception e) {
+    public void handleException(Exception e) {
         errorLog.add(e);
         System.err.println(e);
     }
 
-    ArrayList getErrorLog() {
+    public ArrayList getErrorLog() {
         return errorLog;
     }
 

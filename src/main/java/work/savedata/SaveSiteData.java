@@ -1,4 +1,6 @@
-package my.com;
+package work.savedata;
+
+import work.db.Site;
 
 public interface SaveSiteData {
 
