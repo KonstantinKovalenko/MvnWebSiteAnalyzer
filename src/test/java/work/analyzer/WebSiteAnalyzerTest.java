@@ -66,16 +66,16 @@ public class WebSiteAnalyzerTest {
         wsa.returnCleanURL(wsa.getWebPageURL());
     }
 
-    @Ignore
     @Test
     public void testSaveDataToHDD() {
         WebSiteAnalyzer wsa = appContext.getBean("WebSiteAnalyzer", WebSiteAnalyzer.class);
         wsa.scanWebSite();
         wsa.saveDataToHDD(wsa.getSite(), path.getPath());
-        File f = new File("d:\\123asd\\www-beluys-com-create_site-create_site4-html");
+        File f = new File("testneeds/www-beluys-com-create_site-create_site4-html");
         assertTrue(f.isDirectory());
     }
 
+    @Ignore
     @Test
     public void testSaveDataInMySQL() {
         WebSiteAnalyzer wsa = appContext.getBean("WebSiteAnalyzer", WebSiteAnalyzer.class);

@@ -11,7 +11,7 @@
         <constructor-arg name ="password" value="gosuprotoss"/>
     </bean>
     <bean id="path" class="work.savedata.PathToSaveOnHDD">
-        <constructor-arg name ="pathToSave" value="d:\\123asd"/>
+        <constructor-arg name ="pathToSave" value="testneeds"/>
     </bean>
     <bean id="WebSiteAnalyzer" class="work.analyzer.WebSiteAnalyzer" scope ="prototype">
         <constructor-arg name ="webPageURL" value="http://www.beluys.com/create_site/create_site4.html"/>
