@@ -4,47 +4,56 @@ import work.savedata.ConnectionProperties;
 import java.io.File;
 import org.junit.*;
 import static org.junit.Assert.*;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import work.Configuration;
+import work.savedata.PathToSaveOnHDD;
 
 public class WebSiteAnalyzerTest {
 
-    @Ignore
-    @Test
-    public void testCheckURLForValidityTrue() {
-        WebSiteAnalyzer wa = new WebSiteAnalyzer("http://www.beluys.com/create_site/create_site4.html", "html");
-        assertTrue(wa.checkURLForValidity("http://www.beluys.com/create_site/create_site4.html"));
+    private ApplicationContext appContext;
+    private WebSiteAnalyzer wsa;
+    private PathToSaveOnHDD path;
+    private ConnectionProperties cProperties;
+
+    @Before
+    public void setUp() {
+        appContext = new AnnotationConfigApplicationContext(Configuration.class);
+        wsa = (WebSiteAnalyzer) appContext.getBean("webSiteAnalyzer");
+        path = (PathToSaveOnHDD) appContext.getBean("path");
+        cProperties = (ConnectionProperties) appContext.getBean("cProperties");
     }
 
-    @Ignore
+    @Test
+    public void testCheckURLForValidityTrue() {
+        assertTrue(wsa.checkURLForValidity("http://www.beluys.com/create_site/create_site4.html"));
+    }
+
     @Test
     public void testCheckURLForValidityFalse() {
         WebSiteAnalyzer wa = new WebSiteAnalyzer("some URL", "html");
         assertFalse(wa.checkURLForValidity("some URL"));
     }
 
-    @Ignore
     @Test(expected = NullPointerException.class)
     public void testCheckURLForValidityNull() {
         WebSiteAnalyzer wa = new WebSiteAnalyzer(null, "html");
         wa.checkURLForValidity(null);
     }
 
-    @Ignore
     @Test
     public void testReturnCleanURLHTTP() {
-        WebSiteAnalyzer wa = new WebSiteAnalyzer("http://www.beluys.com/html_basics/html_page.html");
         String expected = "www.beluys.com";
-        assertEquals(expected, wa.returnCleanURL(wa.getWebPageURL()));
+        assertEquals(expected, wsa.returnCleanURL(wsa.getWebPageURL()));
     }
 
-    @Ignore
     @Test
     public void testReturnCleanURLHTTPS() {
-        WebSiteAnalyzer wa = new WebSiteAnalyzer("https://www.beluys.ru/html_basics/html_page.html");
+        WebSiteAnalyzer wa = new WebSiteAnalyzer("https://www.beluys.ru/anyother/123abc.html");
         String expected = "www.beluys.ru";
         assertEquals(expected, wa.returnCleanURL(wa.getWebPageURL()));
     }
 
-    @Ignore
     @Test(expected = IllegalArgumentException.class)
     public void testReturnCleanURLIllegalArgumentEx() {
         WebSiteAnalyzer wa = new WebSiteAnalyzer("www.beluys.com/html_basics/html_page.html", "html");
@@ -52,21 +61,17 @@ public class WebSiteAnalyzerTest {
         wa.returnCleanURL(wa.getWebPageURL());
     }
 
-    @Ignore
     @Test
     public void testSaveDataToHDD() {
-        WebSiteAnalyzer wa = new WebSiteAnalyzer("http://www.beluys.com/create_site/create_site4.html", "html");
-        wa.scanWebSite();
-        wa.saveDataToHDD(wa.getSite(), "d:\\123asd");
-        File f = new File("d:\\123asd\\www-beluys-com-create_site-create_site4-html");
+        wsa.scanWebSite();
+        wsa.saveDataToHDD(wsa.getSite(), path.getPath());
+        File f = new File(path.getPath() + "/www-beluys-com-create_site-create_site4-html");
         assertTrue(f.isDirectory());
     }
 
     @Test
     public void testSaveDataInMySQL() {
-        WebSiteAnalyzer wa = new WebSiteAnalyzer("http://www.beluys.com/create_site/create_site4.html", "html");
-        wa.scanWebSite();
-        ConnectionProperties cProperties = new ConnectionProperties("localhost", "3306", "WebSiteAnalyzerDB", "root", "gosuprotoss");
-        wa.saveDataToMySQL(cProperties, wa.getSite());
+        wsa.scanWebSite();
+        wsa.saveDataToMySQL(cProperties, wsa.getSite());
     }
 }
