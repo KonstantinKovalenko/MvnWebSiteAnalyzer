@@ -8,31 +8,27 @@ import java.sql.Statement;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import work.analyzer.ExceptionHandler;
-import work.analyzer.WebSiteAnalyzer;
 
-public class SaveDataInMySQL implements SaveSiteData {
+@Service("mySQLSaver")
+public class SaveDataInMySQL {
 
-    private final String mainPage;
-    private static ExceptionHandler exceptionHandler;
-    private final ConnectionProperties cProperties;
+    @Autowired
+    private String mainPage;
+    @Autowired
+    private Site site;
+    @Resource(name = "exceptionHandler")
+    private ExceptionHandler exceptionHandler;
+    @Resource(name = "cProperties")
+    private JDBCConnectionProperties cProperties;
 
-    public SaveDataInMySQL(ConnectionProperties cProperties, String mainPage) {
-        this.mainPage = mainPage;
-        createExceptionHandler();
-        this.cProperties = cProperties;
-    }
-
-    private void createExceptionHandler() {
-        WebSiteAnalyzer wsa = new WebSiteAnalyzer("");
-        exceptionHandler = wsa.getExceptionHandler();
-    }
-
-    @Override
-    public void saveData(Site site) {
+    public void saveData() {
         try (Connection con = openConnection()) {
             addDataToMainTable(con);
-            addDataToSecondaryTable(con, site);
+            addDataToSecondaryTable(con);
         } catch (SQLException e) {
             exceptionHandler.handleException(e);
         }
@@ -66,7 +62,7 @@ public class SaveDataInMySQL implements SaveSiteData {
         return result;
     }
 
-    private void addDataToSecondaryTable(Connection con, Site site) throws SQLException {
+    private void addDataToSecondaryTable(Connection con) throws SQLException {
         List<Page> siteDB = site.getSiteDataBase();
         for (Page page : siteDB) {
             String sSQL = "insert into data (ID_Sites, PageURL, PhraseMatch,MatchesCounter,SymbolCounter) values "

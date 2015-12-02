@@ -1,14 +1,13 @@
 package work.savedata;
 
+import org.springframework.stereotype.Component;
+
+@Component("path")
 public class PathToSaveOnHDD {
 
-    private final String PATH;
+    private String path = "testneeds";
 
-    public PathToSaveOnHDD(String pathToSave) {
-        this.PATH = pathToSave;
-    }
-    
-    public String getPath(){
-        return PATH;
+    public String getPath() {
+        return path;
     }
 }

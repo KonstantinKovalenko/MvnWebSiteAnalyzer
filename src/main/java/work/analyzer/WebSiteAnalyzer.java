@@ -1,6 +1,5 @@
 package work.analyzer;
 
-import work.savedata.*;
 import work.db.*;
 import java.io.*;
 import java.net.*;
@@ -172,7 +171,7 @@ public class WebSiteAnalyzer {
         return myMatcher.matches();
     }
 
-    String returnCleanURL(String inputString) {
+    private String returnCleanURL(String inputString) {
         if (URLisNotValid()) {
             throw new IllegalArgumentException();
         }
@@ -231,7 +230,6 @@ public class WebSiteAnalyzer {
     //<href="15.xml" 
     //<href="/browse.php?sdat=110"
     private void extractAndAddCustomLinkToTempSetFrom(String inputString) {
-
         final int indOfHref = inputString.indexOf(HREF);
         final int indOfQuotes = inputString.indexOf(QUOTES, (indOfHref + HREF.length()));
         if (indexWasNotFound(indOfQuotes)) {
@@ -302,16 +300,6 @@ public class WebSiteAnalyzer {
         }
     }
 
-    public void saveDataToHDD(Site site, String path) {
-        SaveSiteData ssd = new SaveDataToHDD(path);
-        ssd.saveData(site);
-    }
-
-    public void saveDataToMySQL(ConnectionProperties cProperties, Site site) {
-        SaveSiteData ssd = new SaveDataInMySQL(cProperties, returnCleanURL(webPageURL));
-        ssd.saveData(site);
-    }
-
     private boolean objectIsNotNULL(Object o) {
         return o != null;
     }
@@ -333,6 +321,10 @@ public class WebSiteAnalyzer {
         return result;
     }
 
+    public String getCleanWebPageURL() {
+        return returnCleanURL(getWebPageURL());
+    }
+
     public Site getSite() {
         Site result = new Site();
         result = site;
@@ -342,5 +334,4 @@ public class WebSiteAnalyzer {
     public ExceptionHandler getExceptionHandler() {
         return exceptionHandler;
     }
-
 }

@@ -1,27 +1,26 @@
 package work.analyzer;
 
-import work.savedata.ConnectionProperties;
-import java.io.File;
 import org.junit.*;
 import static org.junit.Assert.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import work.Configuration;
-import work.savedata.PathToSaveOnHDD;
+import work.savedata.SaveDataInMySQL;
+import work.savedata.SaveDataToHDD;
 
 public class WebSiteAnalyzerTest {
 
-    private ApplicationContext appContext;
     private WebSiteAnalyzer wsa;
-    private PathToSaveOnHDD path;
-    private ConnectionProperties cProperties;
+    private SaveDataInMySQL mySQLSaver;
+    private SaveDataToHDD onHDDSaver;
 
     @Before
     public void setUp() {
-        appContext = new AnnotationConfigApplicationContext(Configuration.class);
+        ApplicationContext appContext = new AnnotationConfigApplicationContext(Configuration.class);
         wsa = (WebSiteAnalyzer) appContext.getBean("webSiteAnalyzer");
-        path = (PathToSaveOnHDD) appContext.getBean("path");
-        cProperties = (ConnectionProperties) appContext.getBean("cProperties");
+        mySQLSaver = (SaveDataInMySQL) appContext.getBean("mySQLSaver");
+        onHDDSaver = (SaveDataToHDD) appContext.getBean("onHDDSaver");
+        wsa.scanWebSite();
     }
 
     @Test
@@ -42,36 +41,12 @@ public class WebSiteAnalyzerTest {
     }
 
     @Test
-    public void testReturnCleanURLHTTP() {
-        String expected = "www.beluys.com";
-        assertEquals(expected, wsa.returnCleanURL(wsa.getWebPageURL()));
-    }
-
-    @Test
-    public void testReturnCleanURLHTTPS() {
-        WebSiteAnalyzer wa = new WebSiteAnalyzer("https://www.beluys.ru/anyother/123abc.html");
-        String expected = "www.beluys.ru";
-        assertEquals(expected, wa.returnCleanURL(wa.getWebPageURL()));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testReturnCleanURLIllegalArgumentEx() {
-        WebSiteAnalyzer wa = new WebSiteAnalyzer("www.beluys.com/html_basics/html_page.html", "html");
-        wa.scanWebPageAndHandleData();
-        wa.returnCleanURL(wa.getWebPageURL());
-    }
-
-    @Test
     public void testSaveDataToHDD() {
-        wsa.scanWebSite();
-        wsa.saveDataToHDD(wsa.getSite(), path.getPath());
-        File f = new File(path.getPath() + "/www-beluys-com-create_site-create_site4-html");
-        assertTrue(f.isDirectory());
+        onHDDSaver.saveData();
     }
 
     @Test
     public void testSaveDataInMySQL() {
-        wsa.scanWebSite();
-        wsa.saveDataToMySQL(cProperties, wsa.getSite());
+        mySQLSaver.saveData();
     }
 }

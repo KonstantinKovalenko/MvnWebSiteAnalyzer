@@ -1,28 +1,24 @@
 package work.savedata;
 
-import work.savedata.SaveSiteData;
 import work.db.Page;
 import work.db.Site;
 import java.io.*;
+import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import work.analyzer.ExceptionHandler;
-import work.analyzer.WebSiteAnalyzer;
 
-public class SaveDataToHDD implements SaveSiteData {
+@Service("onHDDSaver")
+public class SaveDataToHDD {
 
-    private final String path;
+    @Autowired
+    private Site site;
+    @Resource(name = "path")
+    private PathToSaveOnHDD path;
+    @Resource(name = "exceptionHandler")
+    private ExceptionHandler exceptionHandler;
     private final String HTTP = "http://";
     private final String HTTPS = "https://";
-    private static ExceptionHandler exceptionHandler;
-
-    public SaveDataToHDD(String path) {
-        this.path = path;
-        createExceptionHandler();
-    }
-
-    private void createExceptionHandler() {
-        WebSiteAnalyzer wsa = new WebSiteAnalyzer("");
-        exceptionHandler = wsa.getExceptionHandler();
-    }
 
     private String alignFolderName(String inputString) {
         final int indOfHttp = inputString.indexOf(HTTP);
@@ -36,9 +32,9 @@ public class SaveDataToHDD implements SaveSiteData {
         return inputString;
     }
 
-    private void savePageDataToHDD(String path, Page page) {
+    private void savePageDataToHDD(Page page) {
         String folderName = alignFolderName(page.getPageName());
-        String pathToSave = path + "\\" + folderName;
+        String pathToSave = path.getPath() + "\\" + folderName;
         try {
             File f = new File(pathToSave);
             f.mkdirs();
@@ -64,10 +60,9 @@ public class SaveDataToHDD implements SaveSiteData {
         }
     }
 
-    @Override
-    public void saveData(Site site) {
+    public void saveData() {
         for (Object obj : site.getSiteDataBase()) {
-            savePageDataToHDD(path, (Page) obj);
+            savePageDataToHDD((Page) obj);
         }
     }
 }
