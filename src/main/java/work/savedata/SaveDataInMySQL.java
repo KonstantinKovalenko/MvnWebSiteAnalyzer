@@ -10,10 +10,10 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import work.analyzer.ExceptionHandler;
 
-@Service("mySQLSaver")
+@Repository("mySQLSaver")
 public class SaveDataInMySQL {
 
     @Autowired
