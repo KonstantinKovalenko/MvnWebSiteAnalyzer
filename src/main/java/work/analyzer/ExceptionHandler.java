@@ -1,7 +1,9 @@
 package work.analyzer;
 
 import java.util.*;
+import org.springframework.stereotype.Service;
 
+@Service("exceptionHandler")
 public class ExceptionHandler {
 
     static ArrayList<Exception> errorLog = new ArrayList();

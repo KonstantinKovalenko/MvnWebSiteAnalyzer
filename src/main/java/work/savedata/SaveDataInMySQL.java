@@ -8,41 +8,36 @@ import java.sql.Statement;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 import work.analyzer.ExceptionHandler;
-import work.analyzer.WebSiteAnalyzer;
 
-public class SaveDataInMySQL implements SaveSiteData {
+@Repository("mySQLSaver")
+public class SaveDataInMySQL {
 
-    private final String mainPage;
-    private static ExceptionHandler exceptionHandler;
-    private final ConnectionProperties cProperties;
+    @Autowired
+    private String mainPage;
+    @Autowired
+    private Site site;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+    @Resource(name = "exceptionHandler")
+    private ExceptionHandler exceptionHandler;
 
-    public SaveDataInMySQL(ConnectionProperties cProperties, String mainPage) {
-        this.mainPage = mainPage;
-        createExceptionHandler();
-        this.cProperties = cProperties;
-    }
-
-    private void createExceptionHandler() {
-        WebSiteAnalyzer wsa = new WebSiteAnalyzer("");
-        exceptionHandler = wsa.getExceptionHandler();
-    }
-
-    @Override
-    public void saveData(Site site) {
-        try (Connection con = openConnection()) {
-            addDataToMainTable(con);
-            addDataToSecondaryTable(con, site);
-        } catch (SQLException e) {
+    public void saveData() {
+        try {
+            addDataToMainTable();
+            addDataToSecondaryTable();
+        } catch (Exception e) {
             exceptionHandler.handleException(e);
         }
     }
 
-    private void addDataToMainTable(Connection con) throws SQLException {
+    private void addDataToMainTable() {
         final String scanDate = buildScanDate();
-        final String sSQL = "insert into sites (MainPage,ScanDate) values ('" + mainPage + "'," + Integer.parseInt(scanDate) + ")";
-        Statement statement = con.createStatement();
-        statement.execute(sSQL);
+        jdbcTemplate.update("insert into sites (MainPage,ScanDate) values ('" + mainPage + "'," + Integer.parseInt(scanDate) + ")");
     }
 
     private String buildScanDate() {
@@ -66,22 +61,15 @@ public class SaveDataInMySQL implements SaveSiteData {
         return result;
     }
 
-    private void addDataToSecondaryTable(Connection con, Site site) throws SQLException {
+    private void addDataToSecondaryTable() {
         List<Page> siteDB = site.getSiteDataBase();
         for (Page page : siteDB) {
-            String sSQL = "insert into data (ID_Sites, PageURL, PhraseMatch,MatchesCounter,SymbolCounter) values "
+            jdbcTemplate.update("insert into data (ID_Sites, PageURL, PhraseMatch, MatchesCounter, SymbolCounter) values "
                     + "((select max(id) from sites),"
                     + "'" + page.getPageName() + "',"
                     + "'" + page.getPhraseMatch() + "',"
                     + page.getPageMatchesCounter() + ","
-                    + page.getPageSymbolCounter() + ")";
-            Statement statement = con.createStatement();
-            statement.execute(sSQL);
+                    + page.getPageSymbolCounter() + ")");
         }
-    }
-
-    private Connection openConnection() throws SQLException {
-        final String dbURL = "jdbc:mysql://" + cProperties.getHost() + ":" + cProperties.getPort() + "/" + cProperties.getDBName();
-        return DriverManager.getConnection(dbURL, cProperties.getUserName(), cProperties.getPassword());
     }
 }
